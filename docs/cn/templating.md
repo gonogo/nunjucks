@@ -429,9 +429,9 @@ The name of the item is: {{ item.name }}
 {% import "forms.html" as forms %}
 
 {{ forms.label('Username') }}
-{{ forms.input('user') }}
+{{ forms.field('user') }}
 {{ forms.label('Password') }}
-{{ forms.input('pass', type='password') }}
+{{ forms.field('pass', type='password') }}
 ```
 
 也可以使用 `from import` 从模板中 import 指定的值到当前的命名空间：
@@ -784,6 +784,6 @@ Nunjucks已经实现了jinja中的大部分过滤器，同时也新增了一些�
 * [urlize](http://jinja.pocoo.org/docs/templates/#urlize)
 * [wordcount](http://jinja.pocoo.org/docs/templates/#wordcount)
 
-你也可以直接[看代码](https://github.com/mozilla/nunjucks/blob/master/src/filters.js)。
+你也可以直接[看代码](https://github.com/mozilla/nunjucks/blob/master/nunjucks/src/filters.js)。
 
 {% endraw %}

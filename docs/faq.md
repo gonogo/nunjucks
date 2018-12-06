@@ -12,6 +12,15 @@ pageid: faq
 Yes. Nunjucks supports all modern browsers and any version of Node.js
 [currently supported by the Node.js Foundation](https://github.com/nodejs/Release#release-schedule1).
 
+## Can I precompile templates for server-side use (Node/Express)?
+
+No, precompiled templates are a browser/client-side optimization only. 
+It is not necessary to precompile on the server because templates are
+compiled then cached the first time they are individually loaded for rendering. 
+The compiled template will then remained cached in memory until the server restarts.
+
+You can choose never to cache by setting [configure](api.html#configure)'s `noCache` option to `true`.
+
 ## Can I use the same templates between nunjucks and jinja2? What are the differences?
 
 Kind of. There are enough differences that it might take some work.
@@ -36,6 +45,7 @@ Additionally, there are few jinja2 features not implemented in nunjucks:
 * `if i is divisibleby(3)`-style conditionals
 * Named block end tags: `{% endblock content %}`
 * Sandboxed mode
+  * Note: this makes it **unsuitable for applications requiring [user-defined templates](api.html#user-defined-templates-warning)**
 * Line statements: `# for item in seq`
 
 Lastly, any custom Python filters and extensions will have to be written in JavaScript.

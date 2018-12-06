@@ -9,7 +9,8 @@ Nunjucks has the following purpose:
 
 * Aim for templating feature parity with Jinja2.
 * Aim for templating feature parity with Twig, but only when not conflicting with Jinja2 parity.
-* Works in Node >= v0.10 (as defined in [Travis test matrix]).(https://github.com/mozilla/nunjucks/blob/master/.travis.yml#L9).
+* Works in all node releases that are
+  [actively maintained by the Node Foundation](https://github.com/nodejs/Release#release-schedule)
 * Works in all modern browsers (with [ES5 support](http://kangax.github.io/compat-table/es5/)).
 * Works in IE8 with [es5-shim](https://github.com/es-shims/es5-shim).
 * Keep footprint browser files as small as possible (save on bandwidth, download time).

@@ -14,6 +14,18 @@ This is an overview of the templating features available in Nunjucks.
 > lacking here. Read about the differences
 > [here](http://mozilla.github.io/nunjucks/faq.html#can-i-use-the-same-templates-between-nunjucks-and-jinja2-what-are-the-differences).
 
+## User-Defined Templates Warning
+
+  nunjucks does not sandbox execution so **it is not safe to run
+  user-defined templates or inject user-defined content into template
+  definitions**. On the server, you can expose attack vectors for
+  accessing sensitive data and remote code execution. On the client,
+  you can expose cross-site scripting vulnerabilities even for
+  precompiled templates (which can be mitigated with a strong
+  [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)). See
+  [this issue](https://github.com/mozilla/nunjucks-docs/issues/17) for
+  more information.
+
 ## File Extensions
 
 Although you are free to use any file extension you wish for your
@@ -239,6 +251,23 @@ var food = {
 
 The [`dictsort`](http://jinja.pocoo.org/docs/templates/#dictsort) filter is
 available for sorting objects when iterating over them.
+
+ES iterators are supported, like the new builtin Map and Set. But also
+anything implementing the iterator protocal.
+
+```js
+var fruits = new Map([
+  ["banana", "yellow"],
+  ["apple", "red"],
+  ["peach", "pink"]
+])
+```
+
+```jinja
+{% for fruit, color in fruits %}
+  Did you know that {{ fruit }} is {{ color }}?
+{% endfor %}
+```
 
 Additionally, Nunjucks will unpack arrays into variables:
 
@@ -1095,6 +1124,10 @@ This default can be overridden by using the first parameter.
 3.5
 ```
 
+### forceescape
+
+Enforce HTML escaping. This will probably double escape variables.
+
 ### groupby
 
 Group a sequence of objects by a common attribute:
@@ -1803,7 +1836,7 @@ Count and output the number of words in a string:
 ```
 
 Alternatively, it's easy to [read the JavaScript
-code](https://github.com/mozilla/nunjucks/blob/master/src/filters.js)
+code](https://github.com/mozilla/nunjucks/blob/master/nunjucks/src/filters.js)
 that implements these filters.
 
 {% endraw %}
