@@ -1047,6 +1047,66 @@ class Compiler extends Obj {
     this._addScopeLevel();
   }
 
+  compileEmbed(node, frame) {
+    const id1 = this._tmpid();
+    const id2 = this._tmpid();
+
+    var blockList = [];
+    var currentId;
+    var idx;
+    var iName;
+    var iBlock;
+    var blocks = node.body.findAll(nodes.Block);
+    for (idx = 0; idx < blocks.length; idx += 1) {
+      currentId = this._tmpid();
+      iBlock = blocks[idx];
+      iName = iBlock.name.value;
+      blockList.push({id: currentId, name: iName});
+
+      this._emitLine('function b_' + currentId + '(env, context, frame, runtime, cb) {');
+      this._emitLine('var lineno = null;');
+      this._emitLine('var colno = null;');
+      this._emitLine('var ' + this.buffer + ' = "";');
+      this._emitLine('try {');
+
+      const tmpFrame = new Frame();
+      this.compile(iBlock.body, tmpFrame);
+      this._emitLine('cb(null, ' + this.buffer + ');');
+      this._emitLine('} catch (e) {');
+      this._emitLine('  cb(runtime.handleError(e, lineno, colno));');
+      this._emitLine('}');
+      this._emitLine('}');
+    }
+
+    this._emitLine('var tasks = [];');
+    this._emitLine('tasks.push(function(callback) {');
+    this._emit('env.getTemplate(');
+    this._compileExpression(node.template, frame);
+    this._emitLine(', true, ' + this._templateName() + ', false, ' + this._makeCallback(id1));
+    this._emitLine('callback(null, ' + id1 + ');});');
+    this._emitLine('});');
+
+    this._emitLine('tasks.push(function(template, callback){');
+    blockList.forEach(function(block) {
+      this._emitLine('template.blocks["' + block.name + '"] = b_' + block.id);
+    }.bind(this));
+    this._emitLine('callback(null, template);');
+    this._emitLine('});');
+
+    this._emitLine('tasks.push(function(template, callback){');
+    this._emitLine('template.render(context.getVariables(), frame, ' + this._makeCallback(id2));
+    this._emitLine('callback(null,' + id2 + ');});');
+    this._emitLine('});');
+
+    this._emitLine('tasks.push(function(result, callback){');
+    this._emitLine(this.buffer + ' += result;');
+    this._emitLine('callback();');
+    this._emitLine('});');
+
+    this._emitLine('env.waterfall(tasks, function(){');
+    this._addScopeLevel();
+  }
+
   compileInclude(node, frame) {
     this._emitLine('var tasks = [];');
     this._emitLine('tasks.push(');

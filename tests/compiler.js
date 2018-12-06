@@ -1521,7 +1521,12 @@
         '1,0,true\n2,1,false\n3,2,false\n');
 
       equal('{% for k,v in items %}{% embed "include-in-loop.njk" %}{% endembed %}{% endfor %}',
-        {items: {'a': 'A', 'b': 'B'}},
+        {
+          items: {
+            a: 'A',
+            bar: 'B'
+          }
+        },
         '1,0,true\n2,1,false\n');
 
       finish(done);
@@ -1529,9 +1534,9 @@
 
     it('should make embeds inherit scope', function(done) {
       equal('{% for item in [1,2] %}' +
-        '{% embed "item.njk" %}{% endembed %}' +
-        '{% endfor %}',
-        'showing 1showing 2');
+      '{% embed "item.njk" %}{% endembed %}' +
+      '{% endfor %}',
+      'showing 1showing 2');
       finish(done);
     });
 
@@ -1545,7 +1550,7 @@
       equal('{% embed "base-set-wraps-block.njk" %}' +
         '{% block somevar %}foo{% endblock %}' +
         '{% endembed %}',
-        'foo\n'
+      'foo\n'
       );
       finish(done);
     });

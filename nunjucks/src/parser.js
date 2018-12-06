@@ -444,29 +444,30 @@ class Parser extends Obj {
     return node;
   }
 
-  parseEmbed: function() {
-      var tag = this.peekToken();
-      if(!this.skipSymbol('embed')) {
-          this.fail('parseEmbed: expected embed', tag.lineno, tag.colno);
-      }
+  parseEmbed() {
+    const tagName = 'embed';
+    const tag = this.peekToken();
+    if (!this.skipSymbol(tagName)) {
+      this.fail('parseEmbed: expected ' + tagName, tag.lineno, tag.colno);
+    }
 
-      var args = this.parseSignature(true, true).children;
-      this.advanceAfterBlockEnd(tag.value);
+    const args = this.parseSignature(true, true).children;
+    this.advanceAfterBlockEnd(tag.value);
 
-      var node = new nodes.Embed(tag.lineno, tag.colno);
-      node.template = args[0];
-      node.contextVar = null;
+    const node = new nodes.Embed(tag.lineno, tag.colno);
+    node.template = args[0];
+    node.contextVar = null;
 
-      if (args.length === 2) {
-        node.contextVar = args[1];
-      }
+    if (args.length === 2) {
+      node.contextVar = args[1];
+    }
 
-      node.body = this.parseUntilBlocks('endembed');
+    node.body = this.parseUntilBlocks('endembed');
 
-      this.advanceAfterBlockEnd();
+    this.advanceAfterBlockEnd();
 
-      return node;
-  },
+    return node;
+  }
 
   parseIf() {
     const tag = this.peekToken();
