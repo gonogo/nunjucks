@@ -525,6 +525,55 @@ an `include` is _not_ a pre-processor that pulls the included template code
 into the including template before rendering; instead, it fires off a separate
 render of the included template, and the results of that render are included.
 
+### embed
+
+`embed` is used to inherit the contents of a specified base template. Blocks in the
+tag override corresponding blocks in the template in a similar way to 
+`extend`. Unlike `extend` which can only be used once in a template,
+the `embed` tag can be used multiple times throughout a template, and so
+behaves in a similar way to `include`.
+
+```jinja
+{% embed item.html %}
+{% block item %}
+The name of the item is: {{ item.name }}
+{% endblock %}
+{% endembed %}
+```
+
+You can store the template to inherit in a variable and use it by
+omitting quotes. This variable can contain a string that points to a
+template file, or it can contain a compiled Template object that has
+been added to the context. That way you can dynamically change which template is
+inherited when rendering by setting it in the context.
+
+```jinja
+{% embed parentTemplate %}
+{% endembed %}
+```
+
+Embedded templates can themselves `extend` another template (so you could have
+a set of related includes that all inherit a common structure). An embedded
+template does not participate in the block structure of its embedding template;
+it has a totally separate inheritance tree and block namespace. In other words,
+an `embed` is _not_ a pre-processor that pulls the embedded template code
+into the embedding template before rendering; instead, it fires off a separate
+render of the embedded template, and the results of that render are embedded.
+
+In addition, embedded templates can themselves `embed` templates.
+
+You can also `embed` templates in the middle of loops:
+
+```jinja
+{% for item in items %}
+{% embed "item.html" %}
+{% endembed %}
+{% endfor %}
+```
+
+The embeded template will have access to the special loop variables -
+see [for](#for) documentation for information about these variables.
+
 ### import
 
 `import` loads a different template and allows you to access its exported
